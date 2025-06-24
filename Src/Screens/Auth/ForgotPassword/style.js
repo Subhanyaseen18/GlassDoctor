@@ -27,7 +27,7 @@ const createStyles = theme => {
     icon: {
       size: hp(3),
       hight: wp(12),
-      color: theme.color.primaryIcon,
+      color: theme.color.iconColor,
     },
     headingText: {
       marginVertical: hp(1),
@@ -45,8 +45,11 @@ const createStyles = theme => {
     appHeading: {
       alignSelf: 'center',
       textAlign: 'center',
-      color: theme.color.primaryButton,
+      color: theme.color.iconColor,
       fontFamily: theme.family.bold,
+    },
+    containerBack: {
+      marginLeft: wp(-1),
     },
   });
   return styles;

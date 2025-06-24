@@ -21,6 +21,7 @@ export default function ForgotEmail() {
   const navigation = useNavigation();
 
   const handleEmail = async values => {
+    navigation.navigate('Otp');
     // const formdata = new FormData();
     // formdata.append('email', values.email);
     // const data = {
@@ -52,7 +53,7 @@ export default function ForgotEmail() {
   });
   return (
     <Formik
-      initialValues={{ email: '' }}
+      initialValues={{ email: 'subhan@gmail.com' }}
       validateOnMount={true}
       onSubmit={values => handleEmail(values)}
       validationSchema={forgotPassword}
@@ -101,7 +102,7 @@ export default function ForgotEmail() {
               error={errors.email && touched.email && errors.email}
               leftIcon={
                 <Iconemail
-                  style={styles.iconColor}
+                  color={styles.icon.color}
                   name="email"
                   size={styles.icon.size}
                 />

@@ -9,6 +9,9 @@ function CustomHeader(props) {
       containerStyle: {
         borderBottomColor: 'transparent',
       },
+      statusBar: {
+        backgroundColor: theme.color.primaryText,
+      },
       sideContainerStyle: {
         justifyContent: 'center',
       },
@@ -21,6 +24,8 @@ function CustomHeader(props) {
   const styles = useThemeAwareObject(createStyles);
   return (
     <Header
+      statusBarProps={props.statusbar ?? styles.statusBar}
+      barStyle={props.barStyle ?? 'dark-content'}
       placement={props.placement ?? 'center'}
       leftComponent={props.leftComponent}
       centerComponent={({ allowFontScaling: false }, props.centerComponent)}

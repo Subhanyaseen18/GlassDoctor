@@ -1,5 +1,5 @@
 import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import { StyleSheet, useColorScheme, View } from 'react-native';
 import MainStack from './Src/Navigation';
 
 function App() {

@@ -15,6 +15,7 @@ import Snackbar from '../../../Components/Snackbar';
 import RnButton from '../../../Components/RnButton';
 import { logoPath } from '../../../../assets/images';
 import { useNavigation } from '@react-navigation/native';
+import CustomHeader from '../../../Components/CustomHeader';
 
 export default function Login() {
   const styles = useThemeAwareObject(createStyles);
@@ -72,6 +73,7 @@ export default function Login() {
         errors,
       }) => (
         <ScrollContainer>
+          <CustomHeader />
           <Image
             resizeMode="contain"
             source={logoPath}

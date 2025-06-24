@@ -51,8 +51,9 @@ const createStyles = theme => {
       fontSize: theme.size.reguler,
       color: theme.color.primaryIcon,
       textDecorationLine: 'underline',
-      fontFamily: theme.family.medium,
+      fontFamily: theme.family.semiBold,
     },
+
     icon: {
       size: hp(3),
       clr: theme.color.disabledButton,
