@@ -11,6 +11,10 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		F42B3B9019D74DF39048C187 /* Exo2-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E3EF1FDCF72E4BA3A595120A /* Exo2-Bold.ttf */; };
+		C898F48E7BC44A99B87D2566 /* Exo2-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2ADCC505676240978A967982 /* Exo2-ExtraBold.ttf */; };
+		9DB1CA814DEF4B86A9DF7F99 /* Exo2-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9DC6053A4CB844DA8AAA70DE /* Exo2-Medium.ttf */; };
+		B57DD472A4FA4F90AACAA087 /* Exo2-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9F1F503ACBC4C9091CA18E5 /* Exo2-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +39,10 @@
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = GlassDoctor/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = GlassDoctor/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		E3EF1FDCF72E4BA3A595120A /* Exo2-Bold.ttf */ = {isa = PBXFileReference; name = "Exo2-Bold.ttf"; path = "../assets/fonts/Exo2-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2ADCC505676240978A967982 /* Exo2-ExtraBold.ttf */ = {isa = PBXFileReference; name = "Exo2-ExtraBold.ttf"; path = "../assets/fonts/Exo2-ExtraBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9DC6053A4CB844DA8AAA70DE /* Exo2-Medium.ttf */ = {isa = PBXFileReference; name = "Exo2-Medium.ttf"; path = "../assets/fonts/Exo2-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E9F1F503ACBC4C9091CA18E5 /* Exo2-Regular.ttf */ = {isa = PBXFileReference; name = "Exo2-Regular.ttf"; path = "../assets/fonts/Exo2-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +101,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				5AA3133DA8CD4C4D9C4351C4 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -115,6 +124,18 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
+		};
+		5AA3133DA8CD4C4D9C4351C4 /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				E3EF1FDCF72E4BA3A595120A /* Exo2-Bold.ttf */,
+				2ADCC505676240978A967982 /* Exo2-ExtraBold.ttf */,
+				9DC6053A4CB844DA8AAA70DE /* Exo2-Medium.ttf */,
+				E9F1F503ACBC4C9091CA18E5 /* Exo2-Regular.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -185,6 +206,10 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				F42B3B9019D74DF39048C187 /* Exo2-Bold.ttf in Resources */,
+				C898F48E7BC44A99B87D2566 /* Exo2-ExtraBold.ttf in Resources */,
+				9DB1CA814DEF4B86A9DF7F99 /* Exo2-Medium.ttf in Resources */,
+				B57DD472A4FA4F90AACAA087 /* Exo2-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
