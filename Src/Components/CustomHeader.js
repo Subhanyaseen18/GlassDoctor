@@ -5,7 +5,7 @@ import { useThemeAwareObject } from '../theme';
 function CustomHeader(props) {
   const createStyles = theme => {
     const themeStyles = StyleSheet.create({
-      backgroundColor: 'transparent',
+      backgroundColor: theme.color.primaryText,
       containerStyle: {
         borderBottomColor: 'transparent',
       },

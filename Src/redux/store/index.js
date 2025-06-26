@@ -1,14 +1,11 @@
 import {configureStore} from '@reduxjs/toolkit';
-import {apiHandler} from '@service';
-import {persistedReducer} from '@slices/index';
 import {persistStore} from 'redux-persist';
+import rootReducer from '../slices/index';
 
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer:rootReducer,
   middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }).concat(apiHandler.middleware),
+    getDefaultMiddleware({serializableCheck:false})
 });
 
 export const persistor = persistStore(store);

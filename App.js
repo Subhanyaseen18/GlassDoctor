@@ -1,13 +1,18 @@
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StyleSheet, useColorScheme, View } from 'react-native';
-import MainStack from './Src/Navigation';
+import { StyleSheet, View } from 'react-native';
+import MainStack from './Src/Navigation'
+import {PersistGate} from 'redux-persist/integration/react';
 
+import {Provider} from 'react-redux';
+import { persistor, store } from './Src/Redux/store';
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
 
   return (
     <View style={styles.container}>
-      <MainStack />
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <MainStack />
+        </PersistGate>
+      </Provider>
     </View>
   );
 }

@@ -27,6 +27,7 @@ const RnInput = ({
   textAlignInput,
   disabled,
   backgroundColor,
+  numberOfLines
 }) => {
   const createStyles = theme => {
     const themeStyles = StyleSheet.create({
@@ -77,6 +78,7 @@ const RnInput = ({
       rightIcon={rightIcon}
       textAlignVertical={textAlignInput}
       disabled={disabled}
+      numberOfLines={numberOfLines}
     />
   );
 };

@@ -5,7 +5,7 @@ import IconEmail from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Iconemail from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as yup from 'yup';
-
+import { useSelector, useDispatch } from 'react-redux';
 import RnInput from '../../../Components/RnInput';
 import RnText from '../../../Components/RnText';
 import ScrollContainer from '../../../Components/ScrollContainer';
@@ -16,15 +16,19 @@ import RnButton from '../../../Components/RnButton';
 import { logoPath } from '../../../../assets/images';
 import { useNavigation } from '@react-navigation/native';
 import CustomHeader from '../../../Components/CustomHeader';
+import { setToken } from '../../../Redux/slices/userSlice';
 
 export default function Login() {
   const styles = useThemeAwareObject(createStyles);
   const [showPassword, setShowPassword] = useState(true);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const handleLogin = async values => {
     console.log('values', values);
-    // navigation.navigate('Forgot');
+    dispatch(setToken('testing'));
+
+    navigation.navigate('Chat');
     // const formData = new FormData();
     // formData.append('email', values.email);
     // formData.append('password', values.password);
@@ -59,7 +63,7 @@ export default function Login() {
   });
   return (
     <Formik
-      initialValues={{ email: '', password: '' }}
+      initialValues={{ email: 'subhan@gmail.com', password: '12345678' }}
       validateOnMount={true}
       onSubmit={values => handleLogin(values)}
       validationSchema={LoginValidation}

@@ -9,11 +9,11 @@ export const colors = {
   gray: '#BABABA',
   orange: '#F1B871',
   red: '#FF0000',
-  lightPink: '#DEC3C0',
   sky: '#A9D8DD',
-
+  dimBlack: '#0000004D',
   lightPurple: '#C9A9CC',
   blue: '#3593B3',
+  lightGrey: '#E8E8E8',
 };
 
 export const fontsSize = {

@@ -17,6 +17,8 @@ const DEFAULT_DARK_COLOR_THEME = {
   textBackground: colors.orange,
   expenseBackground: colors.gray,
   iconColor: colors.dimGray,
+  chatLightColor: colors.lightGrey,
+  modalBackScreenColor: colors.dimBlack,
 };
 
 const FONT_SET = {

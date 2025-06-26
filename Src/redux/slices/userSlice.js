@@ -1,4 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
+import { cloneElement } from 'react';
 
 const initialState = {
   user: null,
@@ -12,6 +13,8 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setToken: (state, action) => {
+      console.log(state,action.payload);
+      
       state.token = action.payload;
     },
     setUser: (state, action) => {
@@ -23,13 +26,11 @@ const userSlice = createSlice({
     setTempToken: (state, action) => {
       state.tempToken = action.payload;
     },
-    clearUser: () => {
-      return {...initialState};
-    },
+    
   },
 });
 
-export const {setToken, setUser, setProfile, setTempToken, clearUser} =
+export const {setToken, setUser, setProfile, setTempToken} =
   userSlice.actions;
 
 export default userSlice.reducer;
