@@ -4,36 +4,33 @@ import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import createStyles from './style';
-
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Ionicons';
-import IconDate from 'react-native-vector-icons/Fontisto';
-import IconPhone from 'react-native-vector-icons/Feather';
 import Iconemail from 'react-native-vector-icons/MaterialCommunityIcons';
-import Iconlock from 'react-native-vector-icons/FontAwesome6';
-import IconEdit from 'react-native-vector-icons/FontAwesome5';
 import { useThemeAwareObject } from '../../../theme';
 import RnText from '../../../Components/RnText';
 import RnInput from '../../../Components/RnInput';
 import ScrollContainer from '../../../Components/ScrollContainer';
 import Header from '../../../Components/CustomHeader';
 import RnButton from '../../../Components/RnButton';
-
+import RnModal from '../../../Components/CustomModal';
+import { setToken } from '../../../Redux/slices/userSlice';
+import { useDispatch } from 'react-redux';
 export default function Profile() {
   const styles = useThemeAwareObject(createStyles);
 
   const navigation = useNavigation();
-
-  const [imagePicker, setImagePicker] = useState(false);
-
-  const [date, setDate] = useState(new Date());
-  const [open, setOpen] = useState(false);
-  const [edit, setEdit] = useState(false);
-  const [delModal, setDelModal] = useState(false);
-  const [showPassword, setShowPassword] = useState(true);
+  const dispatch = useDispatch();
+  const [oldShowPassword, setOldShowPassword] = useState(true);
+  const [newShowPassword, setNewShowPassword] = useState(true);
+  const [confirmShowPassword, setConfirmShowPassword] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const formikRef = useRef();
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
+    setModalVisible(false);
+    dispatch(setToken(null));
     // let data = {
     //   url: logout,
     // };
@@ -49,6 +46,8 @@ export default function Profile() {
     // }
   };
   const handleUpdate = async values => {
+    console.log('values---profile', values);
+
     // const formData = new FormData();
     // imageUri !== null &&
     //   formData.append('profile_image', {
@@ -83,11 +82,20 @@ export default function Profile() {
   };
 
   const EditProfile = yup.object().shape({
-    name: yup.string().required('Please enter name'),
-    password: yup.string().required('Please enter city'),
-    confirmPassword: yup.string().required('Please enter address'),
-    oldPassword: yup.string().required('Please enter about yourself').min(5),
-    country: yup.string().required('Please select your country'),
+    oldPassword: yup
+      .string()
+      .required('Please enter your current password')
+      .min(8, 'Password must be at least 5 characters'),
+
+    password: yup
+      .string()
+      .required('Please enter a new password')
+      .min(8, 'New password must be at least 5 characters'),
+
+    confirmPassword: yup
+      .string()
+      .required('Please confirm your new password')
+      .oneOf([yup.ref('newPassword'), null], 'Passwords must match'),
   });
   return (
     <Formik
@@ -117,56 +125,48 @@ export default function Profile() {
           topBar={
             <Header
               leftComponent={
-                edit && (
-                  <TouchableOpacity
-                    onPress={() => setEdit(false)}
-                    style={styles.containerBack}
-                  >
-                    <Icon
-                      name="arrow-back-circle"
-                      color={styles.icon.color}
-                      size={styles.icon.hight}
-                    />
-                  </TouchableOpacity>
-                )
+                <TouchableOpacity
+                  onPress={() => navigation.goBack()}
+                  style={styles.containerBack}
+                >
+                  <Icon
+                    name="arrow-back-circle"
+                    color={styles.icon.color}
+                    size={styles.icon.sizeUser}
+                  />
+                </TouchableOpacity>
               }
               centerComponent={
-                <RnText
-                  style={[styles.appHeading, styles.headingText]}
-                  family={styles.appHeading.fontFamily}
-                >
+                <RnText style={[styles.appHeading, styles.headingText]}>
                   Profile
                 </RnText>
               }
               rightComponent={
-                edit === false && (
-                  <TouchableOpacity
-                    onPress={() => setEdit(true)}
-                    style={styles.containerBack}
-                  >
-                    <IconEdit
-                      name="user-edit"
-                      color={styles.icon.color}
-                      size={styles.icon.sizeUser}
-                    />
-                  </TouchableOpacity>
-                )
+                <TouchableOpacity
+                  style={styles.containerBack}
+                  onPress={() => setModalVisible(true)}
+                >
+                  <MaterialIcons
+                    name="more-vert"
+                    color={styles.icon.color}
+                    size={styles.icon.hight}
+                  />
+                </TouchableOpacity>
               }
             />
           }
         >
           <View style={styles.containerInput}>
             <RnInput
-              editable={edit}
+              editable={false}
               onChangeText={handleChange('name')}
               onBlur={handleBlur('name')}
               value={values.name}
               inputStyle={styles.input}
-              // error={errors.name && touched.name && errors.name}
               placeholder="Full Name"
               leftIcon={
                 <Icon
-                  style={styles.iconColor}
+                  color={styles.icon.color}
                   name="person"
                   size={styles.icon.size}
                 />
@@ -181,11 +181,10 @@ export default function Profile() {
               onBlur={handleBlur('email')}
               value={values.email}
               inputStyle={styles.input}
-              // error={errors.email && touched.email && errors.email}
               placeholder="Email"
               leftIcon={
                 <Iconemail
-                  style={styles.iconColor}
+                  color={styles.icon.color}
                   name="email"
                   size={styles.icon.size}
                 />
@@ -194,16 +193,16 @@ export default function Profile() {
           </View>
           <View style={styles.containerInput}>
             <RnInput
-              // editable={edit}
+              secureTextEntry={oldShowPassword}
               onChangeText={handleChange('oldPassword')}
               onBlur={handleBlur('oldPassword')}
               value={values.oldPassword}
               inputStyle={styles.input}
-              // error={errors.aout_me && touched.about_me && errors.about_me}
+              error={errors.oldPassword && touched.v && errors.oldPassword}
               placeholder="Enter Old Password"
               leftIcon={
                 <Iconemail
-                  style={styles.iconColor}
+                  color={styles.icon.color}
                   name="lock"
                   size={styles.icon.size}
                 />
@@ -211,11 +210,11 @@ export default function Profile() {
               rightIcon={
                 <TouchableOpacity
                   style={styles.eyeIcon}
-                  onPress={() => setShowPassword(!showPassword)}
+                  onPress={() => setOldShowPassword(!oldShowPassword)}
                 >
                   <Icon
-                    style={styles.iconColor}
-                    name={showPassword ? 'eye-off' : 'eye'}
+                    color={styles.icon.color}
+                    name={oldShowPassword ? 'eye-off' : 'eye'}
                     size={styles.icon.size}
                   />
                 </TouchableOpacity>
@@ -224,16 +223,16 @@ export default function Profile() {
           </View>
           <View style={styles.containerInput}>
             <RnInput
-              // editable={edit}
+              secureTextEntry={newShowPassword}
               onChangeText={handleChange('password')}
               onBlur={handleBlur('password')}
               value={values.password}
               inputStyle={styles.input}
-              // error={errors.address && touched.address && errors.address}
+              error={errors.password && touched.password && errors.password}
               placeholder="Enter New Password"
               leftIcon={
                 <Iconemail
-                  style={styles.iconColor}
+                  color={styles.icon.color}
                   name="lock"
                   size={styles.icon.size}
                 />
@@ -241,11 +240,11 @@ export default function Profile() {
               rightIcon={
                 <TouchableOpacity
                   style={styles.eyeIcon}
-                  onPress={() => setShowPassword(!showPassword)}
+                  onPress={() => setNewShowPassword(!newShowPassword)}
                 >
                   <Icon
-                    style={styles.iconColor}
-                    name={showPassword ? 'eye-off' : 'eye'}
+                    color={styles.icon.color}
+                    name={newShowPassword ? 'eye-off' : 'eye'}
                     size={styles.icon.size}
                   />
                 </TouchableOpacity>
@@ -255,16 +254,20 @@ export default function Profile() {
 
           <View style={styles.containerInput}>
             <RnInput
-              // editable={edit}
+              secureTextEntry={confirmShowPassword}
               onChangeText={handleChange('confirmPassword')}
               onBlur={handleBlur('confirmPassword')}
               value={values.confirmPassword}
               inputStyle={styles.input}
-              // error={errors.about_me && touched.about_me && errors.about_me}
+              error={
+                errors.confirmPassword &&
+                touched.confirmPassword &&
+                errors.confirmPassword
+              }
               placeholder="Repeat Your New Password"
               leftIcon={
                 <Iconemail
-                  style={styles.iconColor}
+                  color={styles.icon.color}
                   name="lock"
                   size={styles.icon.size}
                 />
@@ -272,11 +275,11 @@ export default function Profile() {
               rightIcon={
                 <TouchableOpacity
                   style={styles.eyeIcon}
-                  onPress={() => setShowPassword(!showPassword)}
+                  onPress={() => setConfirmShowPassword(!confirmShowPassword)}
                 >
                   <Icon
-                    style={styles.iconColor}
-                    name={showPassword ? 'eye-off' : 'eye'}
+                    color={styles.icon.color}
+                    name={confirmShowPassword ? 'eye-off' : 'eye'}
                     size={styles.icon.size}
                   />
                 </TouchableOpacity>
@@ -290,6 +293,30 @@ export default function Profile() {
             // loading={updateResponse.isLoading}
             onPress={() => handleSubmit()}
           />
+          <RnModal
+            modalContainer={styles.modalOverlay}
+            show={modalVisible}
+            backButton={() => setModalVisible(false)}
+            backDrop={() => setModalVisible(false)}
+            Visible={() => {}}
+            hide={() => {}}
+          >
+            <View style={styles.modalContent}>
+              <View>
+                <RnText numberOfLines={1} style={styles.nameStyle}>
+                  Hi Subhan Yaseen!
+                </RnText>
+              </View>
+
+              <TouchableOpacity
+                onPress={() => {
+                  handleLogout();
+                }}
+              >
+                <RnText style={styles.modalOption}>Logout</RnText>
+              </TouchableOpacity>
+            </View>
+          </RnModal>
         </ScrollContainer>
       )}
     </Formik>

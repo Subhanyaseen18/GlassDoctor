@@ -28,7 +28,7 @@ export default function Login() {
     console.log('values', values);
     dispatch(setToken('testing'));
 
-    navigation.navigate('Chat');
+    // navigations.navigate('Chat');
     // const formData = new FormData();
     // formData.append('email', values.email);
     // formData.append('password', values.password);

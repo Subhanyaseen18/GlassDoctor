@@ -14,13 +14,6 @@ const createStyles = theme => {
       fontSize: theme.size.medium,
       fontFamily: theme.family.medium,
     },
-    eror: {
-      marginLeft: wp(2),
-      color: theme.color.errorText,
-      fontSize: theme.size.xSmall,
-      fontFamily: theme.family.medium,
-      width: wp(75),
-    },
 
     appHeading: {
       alignSelf: 'center',
@@ -34,73 +27,46 @@ const createStyles = theme => {
       width: wp(80),
     },
 
-    subHeadingText: {
-      fontSize: theme.size.medium,
-      fontFamily: theme.family.medium,
-      marginBottom: wp(7),
-      width: wp(85),
-    },
     buttonContainer: {
       marginVertical: hp(2),
     },
-    logoutButtonContainer: {
-      backgroundColor: theme.color.errorText,
-      marginVertical: hp(2),
-    },
+
     icon: {
       size: hp(3),
-      hight: wp(12),
-      sizeUser: wp(8),
-      color: theme.color.primaryIcon,
+      hight: wp(7),
+      sizeUser: wp(12),
+      color: theme.color.iconColor,
     },
-    headerText: {
-      fontSize: theme.size.xLarge + hp(0.2),
+    modalOverlay: {
+      marginTop: hp(8),
+    },
 
-      color: theme.color.primaryIcon,
-    },
-    topContainer: {
-      flex: 1,
-      marginTop: hp(5),
-      alignItems: 'center',
-    },
-    appIcon: {
-      textAlign: 'center',
-      height: hp(25),
-      color: theme.color.primaryIcon,
-    },
-    logoPerson: {
-      height: hp(22),
-      width: hp(22),
-      borderRadius: theme.borders.radius5,
-    },
-    rnModal: {
+    modalContent: {
       backgroundColor: theme.color.primaryText,
-      borderRadius: theme.borders.radius2,
+      borderRadius: theme.borders.radius1,
+      width: wp(50),
+      padding: wp(5),
     },
-    modalButtonConfirm: {
-      flexDirection: 'row',
-      justifyContent: 'space-evenly',
+    nameStyle: {
+      fontSize: theme.size.medium,
+      color: theme.color.primaryButton,
+      fontFamily: theme.family.samiBold,
       paddingBottom: hp(2),
     },
-    delButtonconfirm: {
-      width: wp(42),
-      backgroundColor: theme.color.errorText,
+    modalOption: {
+      color: theme.color.errorText,
+      fontSize: theme.size.medium,
+      fontFamily: theme.family.samiBold,
     },
-    Button: {
-      width: wp(42),
-    },
-    delModalHeading: {
+    modalTextAccount: {
+      paddingVertical: wp(4),
       fontSize: theme.size.medium,
       color: theme.color.secondaryText,
-      fontFamily: theme.family.bold,
-      paddingVertical: hp(2),
-      paddingHorizontal: hp(2),
+      fontFamily: theme.family.samiBold,
     },
-    main: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: theme.color.primaryBackground,
+    testing: {
+      borderBottomWidth: wp(3),
+      borderColor: 'red',
     },
   });
   return styles;

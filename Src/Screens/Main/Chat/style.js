@@ -65,17 +65,18 @@ const createStyles = theme => {
     icon: {
       size: hp(2.5),
       hight: wp(7),
-      color: theme.color.expenseBackground,
+      color: theme.color.iconColor,
       clr: theme.color.primaryText,
       delete: theme.color.errorText,
     },
     appHeading: {
       alignSelf: 'center',
       textAlign: 'center',
-      marginVertical: hp(1),
-      fontSize: theme.size.xLarge + hp(0.2),
       color: theme.color.primaryButton,
       fontFamily: theme.family.bold,
+      marginBottom: hp(2),
+      fontSize: theme.size.xLarge + hp(0.2),
+      width: wp(80),
     },
     rightComponentStyle: {
       flexDirection: 'row',
@@ -85,12 +86,7 @@ const createStyles = theme => {
     },
     // model design
     modalOverlay: {
-      flex: 1,
-      backgroundColor: theme.color.modalBackScreenColor,
-      justifyContent: 'flex-start',
-      alignItems: 'flex-end',
-      padding: wp(4),
-      paddingTop: hp(7),
+      marginTop: hp(8),
     },
 
     modalContent: {
