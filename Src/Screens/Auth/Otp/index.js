@@ -1,6 +1,6 @@
 import { View, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
-import { useThemeAwareObject } from '../../../theme';
+import { useThemeAwareObject } from '../../../Theme';
 import createStyles from './style';
 import Icon from 'react-native-vector-icons/Ionicons';
 

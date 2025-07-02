@@ -1,5 +1,5 @@
 import { Input } from '@rneui/themed';
-import { useThemeAwareObject } from '../theme';
+import { useThemeAwareObject } from '../Theme';
 import { wp } from '../Utils';
 import React from 'react';
 import { StyleSheet } from 'react-native';

@@ -14,12 +14,12 @@ import { useNavigation } from '@react-navigation/native';
 import CustomHeader from '../../../Components/CustomHeader';
 import RnText from '../../../Components/RnText';
 import RnInput from '../../../Components/RnInput';
-import { useThemeAwareObject } from '../../../theme';
+import { useThemeAwareObject } from '../../../Theme';
 import createStyles from './style';
 import RnModal from '../../../Components/CustomModal';
 import { setToken } from '../../../Redux/slices/userSlice';
 import { useDispatch } from 'react-redux';
-import { apiClient } from '../../../services/api';
+import { apiClient } from '../../../Services/api';
 
 export default function Chat() {
   const [inputText, setInputText] = useState('');

@@ -1,4 +1,4 @@
-import { useThemeAwareObject } from '../theme';
+import { useThemeAwareObject } from '../Theme';
 import { wp } from '../Utils';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';

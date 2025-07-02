@@ -2,7 +2,7 @@ import { View, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { useThemeAwareObject } from '../../../theme';
+import { useThemeAwareObject } from '../../../Theme';
 import createStyles from './style';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Iconemail from 'react-native-vector-icons/MaterialCommunityIcons';

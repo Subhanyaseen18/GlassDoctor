@@ -7,7 +7,7 @@ import createStyles from './style';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Iconemail from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useThemeAwareObject } from '../../../theme';
+import { useThemeAwareObject } from '../../../Theme';
 import RnText from '../../../Components/RnText';
 import RnInput from '../../../Components/RnInput';
 import ScrollContainer from '../../../Components/ScrollContainer';
@@ -55,15 +55,10 @@ export default function Profile() {
     //     name: 'image.png',
     //     type: 'image/png',
     //   });
-    // formData.append('name', values.name);
-    // formData.append('phone', values.number);
-    // formData.append('country', values.country);
-    // formData.append('city', values.city);
-    // formData.append('address', values.address);
-    // formData.append('about_me', values.about_me);
-    // const formattedDate = date.toISOString().split('T')[0];
-    // formData.append('date_of_birth', formattedDate);
-    // formData.append('about_me', values.about_me);
+    // formData.append('oldPassword', values.oldPassword);
+    // formData.append('password', values.password);
+    // formData.append('confirmPassword', values.confirmPassword);
+
     // let data = {
     //   url: completeProfile,
     //   data: formData,

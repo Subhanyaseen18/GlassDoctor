@@ -1,7 +1,7 @@
 import { Header } from '@rneui/themed';
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { useThemeAwareObject } from '../theme';
+import { useThemeAwareObject } from '../Theme';
 function CustomHeader(props) {
   const createStyles = theme => {
     const themeStyles = StyleSheet.create({

@@ -41,7 +41,5 @@ export const fontFamily = {
 };
 
 export const link = {
-  // baseUrl: 'https://expense-app.stackup.solutions/api',
-  // imageUrl: 'https://expense-app.stackup.solutions/',
-  // profileUrl: 'https://qfolio.stackup.solutions/profile-detail/',
+  baseUrl: 'https://api-glassdoctor.stackup.solutions/api',
 };

@@ -7,7 +7,6 @@ const createStyles = theme => {
     container: { flex: 1, backgroundColor: 'white' },
     chatContent: {
       padding: wp(3),
-      // width: wp(90),
     },
     userMsg: {
       alignSelf: 'flex-end',
@@ -38,14 +37,11 @@ const createStyles = theme => {
       flexDirection: 'row',
       alignItems: 'center',
       paddingTop: hp(2),
-      paddingRight: wp(2),
       backgroundColor: theme.color.chatLightColor,
       borderTopRightRadius: theme.borders.radius4,
       borderTopLeftRadius: theme.borders.radius4,
     },
-    inputRow: {
-      width: wp(86),
-    },
+
     input: {
       backgroundColor: theme.color.primaryText,
       borderRadius: theme.borders.radius4,
@@ -53,14 +49,14 @@ const createStyles = theme => {
     },
     containerStyle: {
       borderColor: 'transparent',
+      width: wp(79),
     },
     sendButton: {
-      paddingRight: wp(5),
+      marginBottom: hp(1.5),
     },
     sendCircle: {
-      width: wp(12),
-      height: wp(12),
-      padding: wp(2),
+      width: wp(10),
+      height: wp(10),
       borderRadius: theme.borders.radius5,
       backgroundColor: theme.color.primaryButton,
       justifyContent: 'center',
@@ -118,7 +114,6 @@ const createStyles = theme => {
     testing: {
       borderBottomWidth: wp(0.5),
       borderColor: 'red',
-      // backgroundColor: 'yellow',
     },
   });
   return styles;

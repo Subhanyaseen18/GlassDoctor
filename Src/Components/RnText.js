@@ -1,8 +1,8 @@
 import React from 'react';
-import {StyleSheet, Text} from 'react-native';
-import {useThemeAwareObject} from '../theme';
+import { StyleSheet, Text } from 'react-native';
+import { useThemeAwareObject } from '../Theme';
 
-const RnText = ({onPress, style, numberOfLines, children}) => {
+const RnText = ({ onPress, style, numberOfLines, children }) => {
   const createStyles = theme => {
     const themeStyles = StyleSheet.create({
       textStyle: {
@@ -18,7 +18,8 @@ const RnText = ({onPress, style, numberOfLines, children}) => {
       onPress={onPress}
       style={[styles.textStyle, style]}
       numberOfLines={numberOfLines ?? 0}
-      allowFontScaling={false}>
+      allowFontScaling={false}
+    >
       {children}
     </Text>
   );
