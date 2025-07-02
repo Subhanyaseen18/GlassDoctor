@@ -3,8 +3,8 @@ import MainStack from './Src/Navigation';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import { Provider } from 'react-redux';
-import { persistor, store } from './Src/Redux/store';
 import { NavigationContainer } from '@react-navigation/native';
+import { persistor, store } from './Src/redux/store';
 
 function App() {
   return (

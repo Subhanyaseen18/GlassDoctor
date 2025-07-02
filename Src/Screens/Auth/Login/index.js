@@ -5,48 +5,51 @@ import IconEmail from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Iconemail from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as yup from 'yup';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import RnInput from '../../../Components/RnInput';
 import RnText from '../../../Components/RnText';
 import ScrollContainer from '../../../Components/ScrollContainer';
-import { useThemeAwareObject } from '../../../theme';
 import createStyles from './style';
 import Snackbar from '../../../Components/Snackbar';
 import RnButton from '../../../Components/RnButton';
 import { logoPath } from '../../../../assets/images';
 import { useNavigation } from '@react-navigation/native';
 import CustomHeader from '../../../Components/CustomHeader';
-import { setToken } from '../../../Redux/slices/userSlice';
+import { setToken } from '../../../redux/slices/userSlice';
+import { usePostApiMutation } from '../../../services';
+import { useThemeAwareObject } from '../../../theme';
+import { user_login } from '../../../endPoints';
 
 export default function Login() {
   const styles = useThemeAwareObject(createStyles);
   const [showPassword, setShowPassword] = useState(true);
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const [loginData, loginResponse] = usePostApiMutation();
 
   const handleLogin = async values => {
     console.log('values', values);
     dispatch(setToken('testing'));
 
-    // navigations.navigate('Chat');
-    // const formData = new FormData();
-    // formData.append('email', values.email);
-    // formData.append('password', values.password);
-    // let senddata = {
-    //   url: login,
-    //   data: formData,
-    // };
-    // try {
-    //   const resp = await loginData(senddata).unwrap();
-    //   if (resp.code === 200) {
-    //     dispatch(setToken(resp.data.access_token));
-    //     dispatch(setUser(resp?.data?.user));
-    //   } else {
-    //     Snackbar(resp.message, true);
-    //   }
-    // } catch (error) {
-    //   Snackbar(error.error, true);
-    // }
+    const formData = new FormData();
+    formData.append('email', values.email);
+    formData.append('password', values.password);
+    let senddata = {
+      url: user_login,
+
+      data: formData,
+    };
+    try {
+      const resp = await loginData(senddata).unwrap();
+      if (resp.code === 200) {
+        dispatch(setToken(resp.data.access_token));
+        dispatch(setUser(resp?.data?.user));
+      } else {
+        Snackbar(resp.message, true);
+      }
+    } catch (error) {
+      Snackbar(error.error, true);
+    }
   };
   const LoginValidation = yup.object().shape({
     email: yup

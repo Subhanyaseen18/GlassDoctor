@@ -17,7 +17,7 @@ import RnInput from '../../../Components/RnInput';
 import { useThemeAwareObject } from '../../../theme';
 import createStyles from './style';
 import RnModal from '../../../Components/CustomModal';
-import { setToken } from '../../../Redux/slices/userSlice';
+import { setToken } from '../../../redux/slices/userSlice';
 import { useDispatch } from 'react-redux';
 import { apiClient } from '../../../services/api';
 

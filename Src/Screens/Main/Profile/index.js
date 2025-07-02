@@ -14,7 +14,7 @@ import ScrollContainer from '../../../Components/ScrollContainer';
 import Header from '../../../Components/CustomHeader';
 import RnButton from '../../../Components/RnButton';
 import RnModal from '../../../Components/CustomModal';
-import { setToken } from '../../../Redux/slices/userSlice';
+import { setToken } from '../../../redux/slices/userSlice';
 import { useDispatch } from 'react-redux';
 export default function Profile() {
   const styles = useThemeAwareObject(createStyles);
@@ -55,15 +55,10 @@ export default function Profile() {
     //     name: 'image.png',
     //     type: 'image/png',
     //   });
-    // formData.append('name', values.name);
-    // formData.append('phone', values.number);
-    // formData.append('country', values.country);
-    // formData.append('city', values.city);
-    // formData.append('address', values.address);
-    // formData.append('about_me', values.about_me);
-    // const formattedDate = date.toISOString().split('T')[0];
-    // formData.append('date_of_birth', formattedDate);
-    // formData.append('about_me', values.about_me);
+    // formData.append('oldPassword', values.oldPassword);
+    // formData.append('password', values.password);
+    // formData.append('confirmPassword', values.confirmPassword);
+
     // let data = {
     //   url: completeProfile,
     //   data: formData,
