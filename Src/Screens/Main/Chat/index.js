@@ -19,7 +19,7 @@ import createStyles from './style';
 import RnModal from '../../../Components/CustomModal';
 import { setToken } from '../../../redux/slices/userSlice';
 import { useDispatch } from 'react-redux';
-import { apiClient } from '../../../services/api';
+import { apiClient } from '../../../Services/api';
 
 export default function Chat() {
   const [inputText, setInputText] = useState('');
