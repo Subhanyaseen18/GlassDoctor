@@ -6,9 +6,7 @@ function CustomHeader(props) {
   const createStyles = theme => {
     const themeStyles = StyleSheet.create({
       backgroundColor: theme.color.primaryText,
-      containerStyle: {
-        borderBottomColor: 'transparent',
-      },
+
       statusBar: {
         backgroundColor: theme.color.primaryText,
       },

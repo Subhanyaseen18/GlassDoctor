@@ -5,11 +5,13 @@ import { StyleSheet } from 'react-native';
 const createStyles = theme => {
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: 'white' },
-    chatContent: { padding: wp(2) },
+    chatContent: {
+      padding: wp(3),
+      // width: wp(90),
+    },
     userMsg: {
       alignSelf: 'flex-end',
       marginVertical: wp(1.5),
-
       backgroundColor: theme.color.primaryButton,
       padding: wp(3),
       borderRadius: theme.borders.radius2,
@@ -34,10 +36,12 @@ const createStyles = theme => {
     },
     inputRowContainer: {
       flexDirection: 'row',
-      justifyContent: 'space-around',
+      alignItems: 'center',
       paddingTop: hp(2),
       paddingRight: wp(2),
       backgroundColor: theme.color.chatLightColor,
+      borderTopRightRadius: theme.borders.radius4,
+      borderTopLeftRadius: theme.borders.radius4,
     },
     inputRow: {
       width: wp(86),
@@ -47,7 +51,7 @@ const createStyles = theme => {
       borderRadius: theme.borders.radius4,
       paddingHorizontal: wp(3),
     },
-    abc: {
+    containerStyle: {
       borderColor: 'transparent',
     },
     sendButton: {
@@ -112,8 +116,9 @@ const createStyles = theme => {
       fontFamily: theme.family.samiBold,
     },
     testing: {
-      borderBottomWidth: wp(3),
+      borderBottomWidth: wp(0.5),
       borderColor: 'red',
+      // backgroundColor: 'yellow',
     },
   });
   return styles;

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   FlatList,
@@ -24,74 +24,94 @@ import { apiClient } from '../../../services/api';
 export default function Chat() {
   const [inputText, setInputText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [typingDots, setTypingDots] = useState('');
+  const typingInterval = useRef(null);
+
   const navigation = useNavigation();
   const flatListRef = useRef();
   const dispatch = useDispatch();
-
   const styles = useThemeAwareObject(createStyles);
 
-  const [messages, setMessages] = useState([
-    { id: '1', role: 'bot', text: 'Welcome! Ask me anything 😊' },
-    { id: '2', role: 'user', text: 'How does this work?' },
-  ]);
-
-  const handleSend = () => {
-    if (!inputText.trim()) return;
-    const newMessage = {
-      id: Date.now().toString(),
-      role: 'user',
-      text: inputText,
-    };
-    setMessages(prev => [...prev, newMessage]);
-    setInputText('');
-  };
   const handleLogout = () => {
     setModalVisible(false);
-
     dispatch(setToken(null));
   };
 
-  const startStreaming = async () => {
-    console.log('--------');
+  const startTypingDots = () => {
+    let dots = '';
+    typingInterval.current = setInterval(() => {
+      dots = dots.length < 3 ? dots + '.' : '';
+      setTypingDots(dots);
+    }, 500);
+  };
 
-    const res = await apiClient.stream('/chat/conversation/premium', {
-      messages: [
-        {
-          role: 'user',
-          content: 'i am in dipression',
-        },
-        {
-          role: 'user',
-          content: 'i am in dipression',
-        },
-        {
-          role: 'user',
-          content: 'i am in dipression',
-        },
-        {
-          role: 'user',
-          content: 'i am in dipression',
-        },
-        {
-          role: 'user',
-          content: 'i am in dipression',
-        },
-      ],
-    });
+  const stopTypingDots = () => {
+    clearInterval(typingInterval.current);
+    setTypingDots('');
+  };
 
-    // const reader = res.body.getReader();
-    console.log('response ', JSON.stringify(res));
+  const animateBotMessage = (messageId, fullText) => {
+    const words = fullText.split(' ');
+    let currentWordIndex = 0;
+    let currentText = '';
+    setIsTyping(true);
 
-    // const decoder = new TextDecoder('utf-8');
-
-    let done = false;
-    while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      if (value) {
-        const text = decoder.decode(value, { stream: true });
-        console.log('Stream chunk:', text);
+    const interval = setInterval(() => {
+      if (currentWordIndex < words.length) {
+        currentText +=
+          (currentWordIndex > 0 ? ' ' : '') + words[currentWordIndex];
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === messageId ? { ...msg, text: currentText } : msg,
+          ),
+        );
+        currentWordIndex++;
+        flatListRef.current?.scrollToEnd({ animated: true });
+      } else {
+        clearInterval(interval);
+        setIsTyping(false);
       }
+    }, 120);
+  };
+
+  const startStreaming = async () => {
+    if (!inputText.trim()) return;
+
+    // Add user message
+    const userMessage = {
+      id: `${Date.now()}-user`,
+      role: 'user',
+      text: inputText,
+    };
+    setMessages(prev => [...prev, userMessage]);
+    flatListRef.current?.scrollToEnd({ animated: true });
+    const userInput = inputText;
+    setInputText('');
+
+    try {
+      setIsTyping(true);
+      startTypingDots();
+
+      const res = await apiClient.stream('/chat/conversation/basic', {
+        messages: [{ role: 'user', content: userInput }],
+      });
+      const text = await res.text();
+
+      stopTypingDots();
+
+      // Add bot message placeholder with empty text
+      const botMessageId = `${Date.now()}-bot`;
+      setMessages(prev => [
+        ...prev,
+        { id: botMessageId, role: 'bot', text: '' },
+      ]);
+      animateBotMessage(botMessageId, text);
+    } catch (error) {
+      console.error('Streaming error:', error);
+      stopTypingDots();
+      setIsTyping(false);
     }
   };
 
@@ -110,7 +130,10 @@ export default function Chat() {
         centerComponent={<RnText style={styles.appHeading}>Chat</RnText>}
         rightComponent={
           <View style={styles.rightComponentStyle}>
-            <TouchableOpacity style={styles.containerDelete}>
+            <TouchableOpacity
+              style={styles.containerDelete}
+              onPress={() => setMessages([])}
+            >
               <Icon
                 name="trash"
                 color={styles.icon.delete}
@@ -137,7 +160,12 @@ export default function Chat() {
       >
         <FlatList
           ref={flatListRef}
-          data={messages}
+          data={[
+            ...messages,
+            ...(isTyping && typingDots
+              ? [{ id: 'typing', role: 'bot', text: typingDots }]
+              : []),
+          ]}
           renderItem={renderItem}
           keyExtractor={item => item.id}
           contentContainerStyle={styles.chatContent}
@@ -151,15 +179,17 @@ export default function Chat() {
             <RnInput
               placeholder="Ask Anything..."
               inputStyle={styles.input}
-              numberOfLines={3}
-              multiline
-              containerStyle={styles.abc}
+              containerStyle={styles.containerStyle}
               value={inputText}
               onChangeText={setInputText}
             />
           </View>
 
-          <TouchableOpacity style={styles.sendButton} onPress={startStreaming}>
+          <TouchableOpacity
+            disabled={inputText.trim() === '' || isTyping}
+            style={styles.sendButton}
+            onPress={startStreaming}
+          >
             <View style={styles.sendCircle}>
               <Icon
                 name="paper-airplane"
@@ -180,11 +210,9 @@ export default function Chat() {
         hide={() => {}}
       >
         <View style={styles.modalContent}>
-          <View>
-            <RnText numberOfLines={1} style={styles.nameStyle}>
-              Hi Subhan Yaseen!
-            </RnText>
-          </View>
+          <RnText numberOfLines={1} style={styles.nameStyle}>
+            Hi Subhan Yaseen!
+          </RnText>
           <TouchableOpacity
             onPress={() => {
               setModalVisible(false);
@@ -193,11 +221,7 @@ export default function Chat() {
           >
             <RnText style={styles.modalTextAccount}>Account Settings</RnText>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              handleLogout();
-            }}
-          >
+          <TouchableOpacity onPress={handleLogout}>
             <RnText style={styles.modalOption}>Logout</RnText>
           </TouchableOpacity>
         </View>

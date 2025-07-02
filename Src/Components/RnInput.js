@@ -27,7 +27,7 @@ const RnInput = ({
   textAlignInput,
   disabled,
   backgroundColor,
-  numberOfLines
+  numberOfLines,
 }) => {
   const createStyles = theme => {
     const themeStyles = StyleSheet.create({
