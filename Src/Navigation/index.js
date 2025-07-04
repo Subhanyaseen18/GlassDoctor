@@ -35,7 +35,7 @@ const HomeStack = () => {
 };
 
 const MainStack = () => {
-  const { token } = useSelector(state => state.user);
+  const token = useSelector(state => state.user);
 
   console.log('token', token);
 

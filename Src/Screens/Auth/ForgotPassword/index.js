@@ -8,7 +8,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Iconemail from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { forgot } from '../../../endPoints';
-import { usePostApiMutation } from '../../../service';
 
 import RnInput from '../../../Components/RnInput';
 import RnButton from '../../../Components/RnButton';

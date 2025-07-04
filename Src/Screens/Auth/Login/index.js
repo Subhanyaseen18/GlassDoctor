@@ -13,10 +13,10 @@ import createStyles from './style';
 import Snackbar from '../../../Components/Snackbar';
 import RnButton from '../../../Components/RnButton';
 import { logoPath } from '../../../../assets/images';
+import { usePostApiMutation } from '../../../redux/api/index';
 import { useNavigation } from '@react-navigation/native';
 import CustomHeader from '../../../Components/CustomHeader';
 import { setToken } from '../../../redux/slices/userSlice';
-import { usePostApiMutation } from '../../../services';
 import { useThemeAwareObject } from '../../../theme';
 import { user_login } from '../../../endPoints';
 
@@ -25,31 +25,33 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(true);
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const [loginData, loginResponse] = usePostApiMutation();
+  // const [postApi, { data, error, isLoading }] = usePostApiMutation();
 
   const handleLogin = async values => {
     console.log('values', values);
     dispatch(setToken('testing'));
 
-    const formData = new FormData();
-    formData.append('email', values.email);
-    formData.append('password', values.password);
-    let senddata = {
-      url: user_login,
+    // const formData = new FormData();
+    // formData.append('email', values.email);
+    // formData.append('password', values.password);
+    // let senddata = {
+    //   url: user_login,
 
-      data: formData,
-    };
-    try {
-      const resp = await loginData(senddata).unwrap();
-      if (resp.code === 200) {
-        dispatch(setToken(resp.data.access_token));
-        dispatch(setUser(resp?.data?.user));
-      } else {
-        Snackbar(resp.message, true);
-      }
-    } catch (error) {
-      Snackbar(error.error, true);
-    }
+    //   data: formData,
+    // };
+    // try {
+    //   const resp = await loginData(senddata).unwrap();
+    //   if (resp.code === 200) {
+    //     console.log('login successfully');
+
+    //     // dispatch(setToken(resp.data.access_token));
+    //     // dispatch(setUser(resp?.data?.user));
+    //   } else {
+    //     Snackbar(resp.message, true);
+    //   }
+    // } catch (error) {
+    //   Snackbar(error.error, true);
+    // }
   };
   const LoginValidation = yup.object().shape({
     email: yup

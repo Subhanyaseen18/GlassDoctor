@@ -4,17 +4,17 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import { Provider } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
-import { persistor, store } from './Src/redux/store';
+import { store, persistor } from './Src/redux/store';
 
 function App() {
   return (
     <View style={styles.container}>
       <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <NavigationContainer>
-            <MainStack />
-          </NavigationContainer>
-        </PersistGate>
+        {/* <PersistGate loading={null} persistor={persistor}> */}
+        <NavigationContainer>
+          <MainStack />
+        </NavigationContainer>
+        {/* </PersistGate> */}
       </Provider>
     </View>
   );
