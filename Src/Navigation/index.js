@@ -35,9 +35,9 @@ const HomeStack = () => {
 };
 
 const MainStack = () => {
-  const token = useSelector(state => state.user);
+  const { token } = useSelector(state => state.user);
 
-  console.log('token', token);
+  console.log('tokenNavigation====', token);
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

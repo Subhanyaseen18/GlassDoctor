@@ -41,5 +41,5 @@ export const fontFamily = {
 };
 
 export const link = {
-  baseUrl: 'https://api-glassdoctor.stackup.solutions/api',
+  baseUrl: 'https://api-glassdoctor.stackup.solutions/',
 };

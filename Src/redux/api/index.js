@@ -20,7 +20,7 @@ export const apiHandler = createApi({
     postApi: builder.mutation({
       query: ({ url, method, data }) => {
         console.log('url post: ', url);
-        console.log('data post: ', data);
+        console.log('data post: ', JSON.stringify(data));
         return {
           url,
           method: method ?? 'POST',

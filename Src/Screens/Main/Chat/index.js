@@ -18,8 +18,11 @@ import { useThemeAwareObject } from '../../../theme';
 import createStyles from './style';
 import RnModal from '../../../Components/CustomModal';
 import { setToken } from '../../../redux/slices/userSlice';
-import { useDispatch } from 'react-redux';
-import { apiClient } from '../../../Services/api';
+import { useDispatch, useSelector } from 'react-redux';
+import { apiClient } from '../../../services';
+import { clear_Chat, get_Chat, user_Logout } from '../../../endPoints';
+import { usePostApiMutation } from '../../../redux/api';
+import Snackbar from '../../../Components/Snackbar';
 
 export default function Chat() {
   const [inputText, setInputText] = useState('');
@@ -29,15 +32,86 @@ export default function Chat() {
   const [typingDots, setTypingDots] = useState('');
   const typingInterval = useRef(null);
 
+  const [logOut] = usePostApiMutation();
+  const [clearChat] = usePostApiMutation();
+  const [getChat] = usePostApiMutation();
+
+  const { token, user } = useSelector(state => state.user);
   const navigation = useNavigation();
   const flatListRef = useRef();
   const dispatch = useDispatch();
   const styles = useThemeAwareObject(createStyles);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const sendData = {
+      url: user_Logout,
+      data: { token },
+    };
+    try {
+      const resp = await logOut(sendData);
+      if (resp.data.statusCode === 200) {
+        dispatch(setToken(null));
+      } else {
+        Snackbar(resp.data.message, true);
+      }
+    } catch (error) {
+      Snackbar(error.error, true);
+    }
     setModalVisible(false);
-    dispatch(setToken(null));
   };
+
+  const clearChats = async () => {
+    try {
+      const sendData = {
+        method: 'DELETE',
+        url: `${clear_Chat}/${user.id}`,
+      };
+      const resp = await clearChat(sendData);
+      Snackbar(resp.data.message, true);
+      setMessages([]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getChatAll = async () => {
+    try {
+      const sendData = {
+        url: `${get_Chat}/${user.id}`,
+        method: 'POST',
+        data: { page: 1, limit: 10 },
+      };
+      const resp = await getChat(sendData);
+      if (resp.data.statusCode === 204) {
+        const chatData = resp.data.data;
+        const formattedMessages = [];
+        chatData.forEach(item => {
+          formattedMessages.push({
+            id: `${item.id}-user`,
+            role: 'user',
+            text: item.message,
+          });
+          formattedMessages.push({
+            id: `${item.id}-bot`,
+            role: 'bot',
+            text: item.response,
+          });
+        });
+        setMessages(formattedMessages);
+        setTimeout(() => {
+          flatListRef.current?.scrollToEnd({ animated: true });
+        }, 300);
+      } else {
+        Snackbar(resp.data.message, true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getChatAll();
+  }, []);
 
   const startTypingDots = () => {
     let dots = '';
@@ -57,7 +131,6 @@ export default function Chat() {
     let currentWordIndex = 0;
     let currentText = '';
     setIsTyping(true);
-
     const interval = setInterval(() => {
       if (currentWordIndex < words.length) {
         currentText +=
@@ -78,8 +151,6 @@ export default function Chat() {
 
   const startStreaming = async () => {
     if (!inputText.trim()) return;
-
-    // Add user message
     const userMessage = {
       id: `${Date.now()}-user`,
       role: 'user',
@@ -100,8 +171,6 @@ export default function Chat() {
       const text = await res.text();
 
       stopTypingDots();
-
-      // Add bot message placeholder with empty text
       const botMessageId = `${Date.now()}-bot`;
       setMessages(prev => [
         ...prev,
@@ -132,7 +201,10 @@ export default function Chat() {
           <View style={styles.rightComponentStyle}>
             <TouchableOpacity
               style={styles.containerDelete}
-              onPress={() => setMessages([])}
+              onPress={() => {
+                setMessages([]);
+                clearChats();
+              }}
             >
               <Icon
                 name="trash"

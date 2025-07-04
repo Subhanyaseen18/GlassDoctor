@@ -16,7 +16,7 @@ import { logoPath } from '../../../../assets/images';
 import { usePostApiMutation } from '../../../redux/api/index';
 import { useNavigation } from '@react-navigation/native';
 import CustomHeader from '../../../Components/CustomHeader';
-import { setToken } from '../../../redux/slices/userSlice';
+import { setToken, setUser } from '../../../redux/slices/userSlice';
 import { useThemeAwareObject } from '../../../theme';
 import { user_login } from '../../../endPoints';
 
@@ -25,33 +25,30 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(true);
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  // const [postApi, { data, error, isLoading }] = usePostApiMutation();
-
+  const [loginData, loginResponse] = usePostApiMutation();
   const handleLogin = async values => {
-    console.log('values', values);
-    dispatch(setToken('testing'));
+    // console.log('values', values);
 
-    // const formData = new FormData();
-    // formData.append('email', values.email);
-    // formData.append('password', values.password);
-    // let senddata = {
-    //   url: user_login,
+    let senddata = {
+      url: user_login,
+      data: { email: values.email, password: values.password },
+    };
 
-    //   data: formData,
-    // };
-    // try {
-    //   const resp = await loginData(senddata).unwrap();
-    //   if (resp.code === 200) {
-    //     console.log('login successfully');
+    try {
+      const resp = await loginData(senddata);
 
-    //     // dispatch(setToken(resp.data.access_token));
-    //     // dispatch(setUser(resp?.data?.user));
-    //   } else {
-    //     Snackbar(resp.message, true);
-    //   }
-    // } catch (error) {
-    //   Snackbar(error.error, true);
-    // }
+      if (resp.data.statusCode === 200) {
+        console.log('login successfully');
+        // console.log(resp.data.data.token);
+
+        dispatch(setToken(resp?.data?.data?.token));
+        dispatch(setUser(resp?.data?.data?.user));
+      } else {
+        Snackbar(resp.data.message);
+      }
+    } catch (error) {
+      Snackbar(error.error, true);
+    }
   };
   const LoginValidation = yup.object().shape({
     email: yup
@@ -68,7 +65,7 @@ export default function Login() {
   });
   return (
     <Formik
-      initialValues={{ email: 'subhan@gmail.com', password: '12345678' }}
+      initialValues={{ email: 'subhan@gmail.com', password: 'password' }}
       validateOnMount={true}
       onSubmit={values => handleLogin(values)}
       validationSchema={LoginValidation}
@@ -147,7 +144,7 @@ export default function Login() {
             <RnButton
               title="Login"
               style={[styles.buttonContainer]}
-              // loading={loginResponse.isLoading}
+              loading={loginResponse.isLoading}
               onPress={() => {
                 handleSubmit();
               }}

@@ -2,11 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { combineReducers } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 import userReducer from './userSlice';
-import { apiHandler } from '../../services';
+import { apiHandler } from '../api';
 
 const rootReducer = combineReducers({
   user: userReducer,
-  [apiHandler.reducerPath]: apiHandler.reducer,
+  [apiHandler.reducerPath]: apiHandler.reducer, // ✅ Required for RTK Query
 });
 
 const persistConfig = {
@@ -15,10 +15,6 @@ const persistConfig = {
   whitelist: ['user'],
 };
 
-const root = (state, action) => {
-  return persistedReducer(state, action);
-};
-
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export default root;
+export default persistedReducer;

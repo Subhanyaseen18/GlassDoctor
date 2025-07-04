@@ -10,11 +10,11 @@ function App() {
   return (
     <View style={styles.container}>
       <Provider store={store}>
-        {/* <PersistGate loading={null} persistor={persistor}> */}
-        <NavigationContainer>
-          <MainStack />
-        </NavigationContainer>
-        {/* </PersistGate> */}
+        <PersistGate loading={null} persistor={persistor}>
+          <NavigationContainer>
+            <MainStack />
+          </NavigationContainer>
+        </PersistGate>
       </Provider>
     </View>
   );
