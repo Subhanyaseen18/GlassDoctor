@@ -7,7 +7,7 @@ import createStyles from './style';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Iconemail from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
-import { forgot } from '../../../endPoints';
+import { forgor_password, forgot } from '../../../endPoints';
 
 import RnInput from '../../../Components/RnInput';
 import RnButton from '../../../Components/RnButton';
@@ -15,31 +15,34 @@ import Container from '../../../Components/Container';
 import Header from '../../../Components/CustomHeader';
 import Snackbar from '../../../Components/Snackbar';
 import RnText from '../../../Components/RnText';
+import { usePostApiMutation } from '../../../redux/api';
 export default function ForgotEmail() {
   const styles = useThemeAwareObject(createStyles);
   const navigation = useNavigation();
+  const [forgotData, forgotResponse] = usePostApiMutation();
 
   const handleEmail = async values => {
-    navigation.navigate('Otp');
-    // const formdata = new FormData();
-    // formdata.append('email', values.email);
-    // const data = {
-    //   url: forgot,
-    //   data: formdata,
-    // };
-    // try {
-    //   const resp = await verifyEmail(data).unwrap();
-    //   if (resp.code === 200) {
-    //     navigation.navigate('Otp', {
-    //       email: values.email,
-    //       otp: resp.data,
-    //     });
-    //   } else {
-    //     Snackbar(resp.message, true);
-    //   }
-    // } catch (error) {
-    //   Snackbar(error.error, true);
-    // }
+    const data = {
+      url: forgor_password,
+      data: { email: values.email },
+    };
+    try {
+      const resp = await forgotData(data);
+
+      if (resp?.data?.statusCode === 200) {
+        navigation.navigate('Otp', {
+          email: values.email,
+          otp: resp.data.data.otp,
+        });
+        Snackbar(resp?.data?.message);
+      } else {
+        Snackbar(resp.error.data.message, true);
+      }
+    } catch (error) {
+      console.log(error);
+
+      Snackbar(error.error, true);
+    }
   };
   const forgotPassword = yup.object().shape({
     email: yup
@@ -80,9 +83,7 @@ export default function ForgotEmail() {
               </TouchableOpacity>
             }
             centerComponent={
-              <RnText style={[styles.appHeading, styles.headingText]}>
-                Email Here
-              </RnText>
+              <RnText style={styles.headingText}>Email Here</RnText>
             }
           />
           <View>
@@ -112,7 +113,7 @@ export default function ForgotEmail() {
             <RnButton
               title="Recover Password"
               style={[styles.buttonContainer]}
-              // loading={verifyEmailResponse.isLoading}
+              loading={forgotResponse.isLoading}
               onPress={() => {
                 handleSubmit();
               }}

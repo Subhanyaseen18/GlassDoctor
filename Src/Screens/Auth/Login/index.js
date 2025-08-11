@@ -37,16 +37,18 @@ export default function Login() {
     try {
       const resp = await loginData(senddata);
 
-      if (resp.data.statusCode === 200) {
+      if (resp?.data?.statusCode === 200) {
         console.log('login successfully');
-        // console.log(resp.data.data.token);
 
         dispatch(setToken(resp?.data?.data?.token));
         dispatch(setUser(resp?.data?.data?.user));
-      } else {
         Snackbar(resp.data.message);
+      } else {
+        Snackbar(resp.error.data.message, true);
       }
     } catch (error) {
+      console.log(error, 'error');
+
       Snackbar(error.error, true);
     }
   };
@@ -61,11 +63,11 @@ export default function Login() {
     password: yup
       .string()
       .required('Please enter password')
-      .min(8, 'Password must be at least 8 characters long'),
+      .min(6, 'Password must be at least 6 characters long'),
   });
   return (
     <Formik
-      initialValues={{ email: 'subhan@gmail.com', password: 'password' }}
+      initialValues={{ email: 'subhany@gmail.com', password: 'password' }}
       validateOnMount={true}
       onSubmit={values => handleLogin(values)}
       validationSchema={LoginValidation}

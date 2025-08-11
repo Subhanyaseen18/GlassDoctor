@@ -27,8 +27,8 @@ const RnModal = ({
 };
 const styles = StyleSheet.create({
   modalContainer: {
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
+    // justifyContent: 'flex-start',
+    // alignItems: 'flex-end',
   },
 });
 export default RnModal;

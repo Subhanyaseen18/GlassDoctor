@@ -1,3 +1,5 @@
+// Full clean implementation with "Data is empty" handling in Chat.js
+
 import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
@@ -6,6 +8,7 @@ import {
   Platform,
   SafeAreaView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -19,8 +22,12 @@ import createStyles from './style';
 import RnModal from '../../../Components/CustomModal';
 import { setToken } from '../../../redux/slices/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { apiClient } from '../../../services';
-import { clear_Chat, get_Chat, user_Logout } from '../../../endPoints';
+import {
+  clear_Chat,
+  create_Chat,
+  get_Chat,
+  user_Logout,
+} from '../../../endPoints';
 import { usePostApiMutation } from '../../../redux/api';
 import Snackbar from '../../../Components/Snackbar';
 
@@ -30,11 +37,13 @@ export default function Chat() {
   const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState([]);
   const [typingDots, setTypingDots] = useState('');
-  const typingInterval = useRef(null);
+  const [clearChatModalVisible, setClearChatModalVisible] = useState(false);
 
+  const typingInterval = useRef(null);
   const [logOut] = usePostApiMutation();
   const [clearChat] = usePostApiMutation();
-  const [getChat] = usePostApiMutation();
+  const [getChat, getChatResponse] = usePostApiMutation();
+  const [createChatData] = usePostApiMutation();
 
   const { token, user } = useSelector(state => state.user);
   const navigation = useNavigation();
@@ -43,31 +52,25 @@ export default function Chat() {
   const styles = useThemeAwareObject(createStyles);
 
   const handleLogout = async () => {
-    const sendData = {
-      url: user_Logout,
-      data: { token },
-    };
+    const sendData = { url: user_Logout, data: { token } };
     try {
       const resp = await logOut(sendData);
-      if (resp.data.statusCode === 200) {
+      if (resp?.data?.statusCode === 200) {
         dispatch(setToken(null));
       } else {
-        Snackbar(resp.data.message, true);
+        Snackbar(resp?.error?.error, true);
       }
     } catch (error) {
-      Snackbar(error.error, true);
+      Snackbar(error?.error, true);
     }
     setModalVisible(false);
   };
 
   const clearChats = async () => {
     try {
-      const sendData = {
-        method: 'DELETE',
-        url: `${clear_Chat}/${user.id}`,
-      };
+      const sendData = { method: 'DELETE', url: `${clear_Chat}/${user.id}` };
       const resp = await clearChat(sendData);
-      Snackbar(resp.data.message, true);
+      Snackbar(resp?.data?.message, true);
       setMessages([]);
     } catch (error) {
       console.log(error);
@@ -82,10 +85,15 @@ export default function Chat() {
         data: { page: 1, limit: 10 },
       };
       const resp = await getChat(sendData);
-      if (resp.data.statusCode === 204) {
+      if (resp?.data?.statusCode === 204) {
         const chatData = resp.data.data;
+        if (chatData.length === 0) {
+          setMessages([]);
+          return;
+        }
+        const reversedChatData = [...chatData].reverse();
         const formattedMessages = [];
-        chatData.forEach(item => {
+        reversedChatData.forEach(item => {
           formattedMessages.push({
             id: `${item.id}-user`,
             role: 'user',
@@ -98,11 +106,8 @@ export default function Chat() {
           });
         });
         setMessages(formattedMessages);
-        setTimeout(() => {
-          flatListRef.current?.scrollToEnd({ animated: true });
-        }, 300);
       } else {
-        Snackbar(resp.data.message, true);
+        Snackbar(resp?.error?.error, true);
       }
     } catch (error) {
       console.log(error);
@@ -116,7 +121,7 @@ export default function Chat() {
   const startTypingDots = () => {
     let dots = '';
     typingInterval.current = setInterval(() => {
-      dots = dots.length < 3 ? dots + '.' : '';
+      dots = dots.length < 3 ? dots + '.' : '.';
       setTypingDots(dots);
     }, 500);
   };
@@ -149,39 +154,59 @@ export default function Chat() {
     }, 120);
   };
 
-  const startStreaming = async () => {
-    if (!inputText.trim()) return;
+  const startStreaming = async presetText => {
+    const textToSend = presetText || inputText.trim();
+    if (!textToSend) return;
+
     const userMessage = {
       id: `${Date.now()}-user`,
       role: 'user',
-      text: inputText,
+      text: textToSend,
     };
+
     setMessages(prev => [...prev, userMessage]);
     flatListRef.current?.scrollToEnd({ animated: true });
-    const userInput = inputText;
+
     setInputText('');
 
     try {
       setIsTyping(true);
       startTypingDots();
 
-      const res = await apiClient.stream('/chat/conversation/basic', {
-        messages: [{ role: 'user', content: userInput }],
-      });
-      const text = await res.text();
+      const sendData = {
+        url: create_Chat,
+        data: {
+          id: user.id,
+          query: textToSend,
+        },
+      };
+
+      const resp = await createChatData(sendData).unwrap();
+      console.log('✅ Chat API Response:', resp);
 
       stopTypingDots();
+
       const botMessageId = `${Date.now()}-bot`;
+
       setMessages(prev => [
         ...prev,
         { id: botMessageId, role: 'bot', text: '' },
       ]);
-      animateBotMessage(botMessageId, text);
+
+      const botText = resp?.text || resp?.data || 'No response received.';
+      animateBotMessage(botMessageId, botText);
     } catch (error) {
-      console.error('Streaming error:', error);
+      console.error('Streaming error:', error.error);
+      Snackbar(error?.error || 'Something went wrong.', true);
       stopTypingDots();
       setIsTyping(false);
     }
+  };
+  const handlePredefinedQuestion = questionText => {
+    setInputText(questionText);
+    setTimeout(() => {
+      startStreaming(questionText);
+    }, 100); // slight delay to ensure inputText updates before streaming
   };
 
   const renderItem = ({ item }) => (
@@ -201,10 +226,7 @@ export default function Chat() {
           <View style={styles.rightComponentStyle}>
             <TouchableOpacity
               style={styles.containerDelete}
-              onPress={() => {
-                setMessages([]);
-                clearChats();
-              }}
+              onPress={() => setClearChatModalVisible(true)}
             >
               <Icon
                 name="trash"
@@ -230,22 +252,77 @@ export default function Chat() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={{ flex: 1 }}
       >
-        <FlatList
-          ref={flatListRef}
-          data={[
-            ...messages,
-            ...(isTyping && typingDots
-              ? [{ id: 'typing', role: 'bot', text: typingDots }]
-              : []),
-          ]}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-          contentContainerStyle={styles.chatContent}
-          onContentSizeChange={() =>
-            flatListRef.current?.scrollToEnd({ animated: true })
-          }
-        />
+        {getChatResponse.isLoading ? (
+          <View style={styles.main}>
+            <ActivityIndicator size="large" color={styles.icon.activity} />
+          </View>
+        ) : (
+          <>
+            {messages.length === 0 && !isTyping && (
+              <View style={styles.emptyContainer}>
+                <TouchableOpacity
+                  style={styles.emptyCard}
+                  onPress={() =>
+                    handlePredefinedQuestion(
+                      'What type of glass issue are you facing? (e.g., cracked window, broken door panel, etc.)',
+                    )
+                  }
+                >
+                  <RnText style={styles.emptyTextCenter}>
+                    What type of glass issue are you facing? (e.g., cracked
+                    window, broken door panel, etc.)
+                  </RnText>
+                </TouchableOpacity>
 
+                <View style={styles.emptyRow}>
+                  <TouchableOpacity
+                    style={styles.emptyCardSmall}
+                    onPress={() =>
+                      handlePredefinedQuestion(
+                        'Do you want to schedule a glass repair or get a price estimate first?',
+                      )
+                    }
+                  >
+                    <RnText style={styles.emptyTextCenter}>
+                      Do you want to schedule a glass repair or get a price
+                      estimate first?
+                    </RnText>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.emptyCardSmall}
+                    onPress={() =>
+                      handlePredefinedQuestion(
+                        'Tell us about the damaged glass so we can help you effectively.',
+                      )
+                    }
+                  >
+                    <RnText style={styles.emptyTextCenter}>
+                      Tell us about the damaged glass so we can help you
+                      effectively.
+                    </RnText>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+
+            <FlatList
+              ref={flatListRef}
+              data={[
+                ...messages,
+                ...(isTyping && typingDots
+                  ? [{ id: 'typing', role: 'bot', text: typingDots }]
+                  : []),
+              ]}
+              renderItem={renderItem}
+              keyExtractor={item => item.id}
+              contentContainerStyle={styles.chatContent}
+              onContentSizeChange={() =>
+                flatListRef.current?.scrollToEnd({ animated: true })
+              }
+            />
+          </>
+        )}
         <View style={styles.inputRowContainer}>
           <View style={styles.inputRow}>
             <RnInput
@@ -256,11 +333,9 @@ export default function Chat() {
               onChangeText={setInputText}
             />
           </View>
-
           <TouchableOpacity
-            disabled={inputText.trim() === '' || isTyping}
             style={styles.sendButton}
-            onPress={startStreaming}
+            onPress={() => startStreaming()}
           >
             <View style={styles.sendCircle}>
               <Icon
@@ -272,18 +347,15 @@ export default function Chat() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-
       <RnModal
         modalContainer={styles.modalOverlay}
         show={modalVisible}
         backButton={() => setModalVisible(false)}
         backDrop={() => setModalVisible(false)}
-        Visible={() => {}}
-        hide={() => {}}
       >
         <View style={styles.modalContent}>
           <RnText numberOfLines={1} style={styles.nameStyle}>
-            Hi Subhan Yaseen!
+            Hi {user.name}!
           </RnText>
           <TouchableOpacity
             onPress={() => {
@@ -296,6 +368,36 @@ export default function Chat() {
           <TouchableOpacity onPress={handleLogout}>
             <RnText style={styles.modalOption}>Logout</RnText>
           </TouchableOpacity>
+        </View>
+      </RnModal>
+      <RnModal
+        show={clearChatModalVisible}
+        backButton={() => setClearChatModalVisible(false)}
+        backDrop={() => setClearChatModalVisible(false)}
+      >
+        <View style={styles.deleteModalContainer}>
+          <RnText style={styles.deleteModalTitle}>Delete Confirmation</RnText>
+          <RnText style={styles.deleteModalDescription}>
+            Are you sure you want to delete all the chat and start over?
+          </RnText>
+          <View style={styles.deleteModalActions}>
+            <TouchableOpacity
+              style={styles.noButton}
+              onPress={() => setClearChatModalVisible(false)}
+            >
+              <RnText style={styles.noButtonText}>No</RnText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.yesButton}
+              onPress={() => {
+                setMessages([]);
+                clearChats();
+                setClearChatModalVisible(false);
+              }}
+            >
+              <RnText style={styles.yesButtonText}>Yes</RnText>
+            </TouchableOpacity>
+          </View>
         </View>
       </RnModal>
     </SafeAreaView>

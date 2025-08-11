@@ -39,6 +39,8 @@ const createStyles = theme => {
     },
     modalOverlay: {
       marginTop: hp(8),
+      justifyContent: 'flex-start',
+      alignItems: 'flex-end',
     },
 
     modalContent: {

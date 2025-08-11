@@ -15,7 +15,9 @@ import Header from '../../../Components/CustomHeader';
 import RnButton from '../../../Components/RnButton';
 import RnModal from '../../../Components/CustomModal';
 import { setToken } from '../../../redux/slices/userSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { reset_Password, user_Logout } from '../../../endPoints';
+import { useGetApiMutation, usePostApiMutation } from '../../../redux/api';
 export default function Profile() {
   const styles = useThemeAwareObject(createStyles);
 
@@ -26,78 +28,75 @@ export default function Profile() {
   const [confirmShowPassword, setConfirmShowPassword] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const { token, user } = useSelector(state => state.user);
+  const [logOut] = usePostApiMutation();
+  const [changePasswordData, changePasswordResponse] = usePostApiMutation();
+
   const formikRef = useRef();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const sendData = {
+      url: user_Logout,
+      data: { token },
+    };
+    try {
+      const resp = await logOut(sendData);
+
+      if (resp?.data?.statusCode === 200) {
+        dispatch(setToken(null));
+        Snackbar(resp.data.message, true);
+      } else {
+        Snackbar(resp.error.data.message, true);
+      }
+    } catch (error) {
+      Snackbar(error.error, true);
+    }
     setModalVisible(false);
-    dispatch(setToken(null));
-    // let data = {
-    //   url: logout,
-    // };
-    // try {
-    //   let resp = await logOut(data).unwrap();
-    //   if (resp.status === 200) {
-    //     dispatch(setToken(null));
-    //   } else {
-    //     Snackbar(resp.message, true);
-    //   }
-    // } catch (error) {
-    //   Snackbar(error.error, true);
-    // }
   };
   const handleUpdate = async values => {
-    console.log('values---profile', values);
+    let data = {
+      url: reset_Password,
+      data: {
+        email: user.email,
+        newPassword: values.password,
+      },
+    };
+    try {
+      let resp = await changePasswordData(data);
 
-    // const formData = new FormData();
-    // imageUri !== null &&
-    //   formData.append('profile_image', {
-    //     uri: imageUri,
-    //     name: 'image.png',
-    //     type: 'image/png',
-    //   });
-    // formData.append('oldPassword', values.oldPassword);
-    // formData.append('password', values.password);
-    // formData.append('confirmPassword', values.confirmPassword);
-
-    // let data = {
-    //   url: completeProfile,
-    //   data: formData,
-    // };
-    // try {
-    //   let resp = await update(data).unwrap();
-    //   if (resp.status === 200) {
-    //     setEdit(false);
-    //     dispatch(setUser(resp.data));
-    //   } else {
-    //     Snackbar(resp.message, true);
-    //   }
-    // } catch (error) {
-    //   Snackbar(error.error, true);
-    // }
+      if (resp?.data?.statusCode === 200) {
+        navigation.navigate('Chat');
+        Snackbar(resp.data.message, true);
+      } else {
+        Snackbar(resp.error.data.message, true);
+      }
+    } catch (error) {
+      Snackbar(error.error, true);
+    }
   };
 
   const EditProfile = yup.object().shape({
     oldPassword: yup
       .string()
       .required('Please enter your current password')
-      .min(8, 'Password must be at least 5 characters'),
+      .min(6, 'Password must be at least 5 characters'),
 
     password: yup
       .string()
       .required('Please enter a new password')
-      .min(8, 'New password must be at least 5 characters'),
+      .min(6, 'New password must be at least 5 characters'),
 
     confirmPassword: yup
       .string()
       .required('Please confirm your new password')
-      .oneOf([yup.ref('newPassword'), null], 'Passwords must match'),
+      .oneOf([yup.ref('password'), null], 'Passwords must match'),
   });
   return (
     <Formik
       innerRef={formikRef}
       initialValues={{
-        name: '',
-        email: '',
+        name: user?.name,
+        email: user.email,
         oldPassword: '',
         password: '',
         confirmPassword: '',
@@ -285,7 +284,7 @@ export default function Profile() {
           <RnButton
             title="Update"
             style={[styles.buttonContainer]}
-            // loading={updateResponse.isLoading}
+            loading={changePasswordResponse.isLoading}
             onPress={() => handleSubmit()}
           />
           <RnModal
@@ -299,7 +298,7 @@ export default function Profile() {
             <View style={styles.modalContent}>
               <View>
                 <RnText numberOfLines={1} style={styles.nameStyle}>
-                  Hi Subhan Yaseen!
+                  Hi {user.name}!
                 </RnText>
               </View>
 

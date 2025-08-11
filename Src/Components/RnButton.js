@@ -27,7 +27,7 @@ const RnButton = ({
   const createStyles = theme => {
     const themeStyles = StyleSheet.create({
       whiteColor: {
-        color: theme.color.primaryLoader,
+        color: theme.color.secondaryBackground,
       },
       buttonContainer: {
         height: hp(6.5),

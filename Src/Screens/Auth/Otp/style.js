@@ -31,7 +31,11 @@ const createStyles = theme => {
       color: theme.color.iconColor,
     },
     headingText: {
-      marginVertical: hp(1),
+      alignSelf: 'center',
+      textAlign: 'center',
+      color: theme.color.primaryButton,
+      fontFamily: theme.family.bold,
+      marginBottom: hp(2),
       fontSize: theme.size.xLarge + hp(0.2),
       width: wp(80),
     },

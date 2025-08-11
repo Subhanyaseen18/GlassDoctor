@@ -16,13 +16,18 @@ import RnText from '../../../Components/RnText';
 import Container from '../../../Components/Container';
 import Header from '../../../Components/CustomHeader';
 import Snackbar from '../../../Components/Snackbar';
+import { usePostApiMutation } from '../../../redux/api';
+import { forgor_password, verify_Otp } from '../../../endPoints';
 
 export default function Otp(props) {
   const otpData = props.route.params;
+  const [resendData] = usePostApiMutation();
+  const [verifyOtpData, varifyOtpResponse] = usePostApiMutation();
+
   const styles = useThemeAwareObject(createStyles);
   const navigation = useNavigation();
-  const CELL_COUNT = 4;
-  const [value, setValue] = useState();
+  const CELL_COUNT = 6;
+  const [value, setValue] = useState(otpData.otp);
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [proops, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
@@ -30,45 +35,45 @@ export default function Otp(props) {
   });
 
   const handleOtp = async () => {
-    // try {
-    //   if (value.length === 4) {
-    //     const data = {
-    //       url: otp,
-    //       data: {
-    //         email: otpData.email,
-    //         reset_otp: value,
-    //       },
-    //     };
-    //     const resp = await otpCode(data).unwrap();
-    //     if (resp.code === 200) {
-    //       navigation.navigate('NewPassword', {
-    //         email: otpData.email,
-    //       });
-    //     } else {
-    //       Snackbar(resp.message, true);
-    //     }
-    //   }
-    // } catch (error) {
-    //   Snackbar(error.error, true);
-    // }
+    try {
+      if (value.length === 6) {
+        const data = {
+          url: verify_Otp,
+          data: {
+            email: otpData.email,
+            otp: value,
+          },
+        };
+        const resp = await verifyOtpData(data);
+
+        if (resp?.data?.statusCode === 200) {
+          navigation.navigate('Login');
+          Snackbar(resp.data.message);
+        } else {
+          Snackbar(resp.data.message, true);
+        }
+      }
+    } catch (error) {
+      Snackbar(error.error.data.message, true);
+    }
   };
 
   const handleResend = async () => {
-    console.log('object');
-    //     try {
-    //       const data = {
-    //         url: forgot,
-    //         data: {email: otpData.email},
-    //       };
-    //       const resp = await reSend(data).unwrap();
-    //       if (resp.code === 200) {
-    //         setValue(resp.data.toFixed());
-    //       } else {
-    //         Snackbar(resp.message, true);
-    //       }
-    //     } catch (error) {
-    //       Snackbar(error.error, true);
-    //     }
+    try {
+      const data = {
+        url: forgor_password,
+        data: { email: otpData.email },
+      };
+      const resp = await resendData(data);
+      if (resp?.data?.statusCode === 200) {
+        setValue(resp?.data?.data?.otp);
+        Snackbar(resp?.data?.message);
+      } else {
+        Snackbar(resp.error.data.message, true);
+      }
+    } catch (error) {
+      Snackbar(error.error, true);
+    }
   };
 
   return (
@@ -87,14 +92,12 @@ export default function Otp(props) {
           </TouchableOpacity>
         }
         centerComponent={
-          <RnText style={[styles.appHeading, styles.headingText]}>
-            Get Your Code
-          </RnText>
+          <RnText style={styles.headingText}>Get Your Code</RnText>
         }
       />
 
       <RnText style={[styles.appHeading, styles.subHeadingText]}>
-        Please enter the 4 digit code that send to your email address.
+        Please enter the 6 digit code that send to your email address.
       </RnText>
       <View style={styles.Containercode}>
         <CodeField
@@ -121,7 +124,7 @@ export default function Otp(props) {
         <RnButton
           title="Verify"
           style={[styles.buttonContainer]}
-          //   loading={otpResponse.isLoading}
+          loading={varifyOtpResponse.isLoading}
           onPress={() => {
             handleOtp();
           }}
